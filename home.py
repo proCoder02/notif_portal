@@ -7,17 +7,13 @@ from email.mime.text import MIMEText
 from admin_insights import show_admin_insights
 from create_user import signup
 from custom_css import inject_custom_css
-from db_connections import fetch_user  
+from db_connections import fetch_user
+from schedule_mail import sent  
 
 # --- Credentials (for demo only, use env vars or st.secrets in production)
 SENDER_EMAIL = 'amitpandeyblogs@gmail.com'
 SENDER_PASSWORD = 'qsat tohx ajcq jwaj'
 
-USERS = {
-    "admin": {"password": "admin123", "role": "admin"},
-    "student1": {"password": "stud123", "role": "student"},
-    "student2": {"password": "stud123", "role": "student"},
-}
 
 # --- Session state initialization
 if "logged_in" not in st.session_state:
@@ -78,6 +74,7 @@ def admin_dashboard():
         "Post Notification",
         "Post Poll",
         "Send Bulk Email",
+        "Email Bulk Invites",
         "View Insights"
     ])
 
@@ -89,6 +86,8 @@ def admin_dashboard():
         st.text('Post Poll')
     elif tab == "Send Bulk Email":
         st.text('Send Emails')
+    elif tab == "Emal Bulk Invites":
+        st.text('Emal Bulk Invites')
     elif tab == "View Insights":
         show_admin_insights()
 
@@ -141,6 +140,9 @@ def admin_dashboard():
             else:
                 st.warning("Please upload both CSV files.")
 
+    elif tab=="Emal Bulk Invites":
+        sent()
+
 # --- Student Dashboard
 
 def student_dashboard():
@@ -188,26 +190,7 @@ def logout():
     st.session_state.role = None
     st.rerun()
 
-# --- Main App
-# def main():
-#     if "show_signup" not in st.session_state:
-#         st.session_state.show_signup = False
 
-#     if not st.session_state.logged_in:
-#         if st.session_state.show_signup:
-#             signup()
-#         else:
-#             login()
-#     elif not st.session_state.logged_in:
-#         login()
-#     elif st.session_state.role == "admin":
-#         admin_dashboard()
-#     elif st.session_state.role == "student":
-#         student_dashboard()
-
-#     st.sidebar.markdown("---")
-#     if st.sidebar.button("Logout"):
-#         logout()
 def main():
     if "show_signup" not in st.session_state:
         st.session_state.show_signup = False
