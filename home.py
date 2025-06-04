@@ -8,7 +8,8 @@ from admin_insights import show_admin_insights
 from create_user import signup
 from custom_css import inject_custom_css
 from db_connections import fetch_user
-from schedule_mail import sent  
+from deadline_reminder_email import deadline_reminders
+from bulk_calendar_inivite_email import sent  
 
 # --- Credentials (for demo only, use env vars or st.secrets in production)
 SENDER_EMAIL = 'amitpandeyblogs@gmail.com'
@@ -75,6 +76,7 @@ def admin_dashboard():
         "Post Poll",
         "Send Bulk Email",
         "Email Bulk Invites",
+        "Deadline Reminders",
         "View Insights"
     ])
 
@@ -86,8 +88,10 @@ def admin_dashboard():
         st.text('Post Poll')
     elif tab == "Send Bulk Email":
         st.text('Send Emails')
-    elif tab == "Emal Bulk Invites":
-        st.text('Emal Bulk Invites')
+    elif tab == "Email Bulk Invites":
+        st.text('Email Bulk Invites')
+    elif tab == ("Deadline Reminders"):
+        st.text("Deadline Reminders")
     elif tab == "View Insights":
         show_admin_insights()
 
@@ -139,9 +143,12 @@ def admin_dashboard():
                     st.error(f"Error processing CSVs: {e}")
             else:
                 st.warning("Please upload both CSV files.")
-
-    elif tab=="Emal Bulk Invites":
+    elif tab=="Email Bulk Invites":
         sent()
+    elif tab=="Deadline Reminders":
+        deadline_reminders()
+
+
 
 # --- Student Dashboard
 
@@ -152,8 +159,7 @@ def student_dashboard():
     st.title(f"Welcome {st.session_state.username}")
 
     st.subheader("📢 Notifications")
-    # for notif in reversed(st.session_state.notifications):
-    #     st.info(f"{notif['timestamp']} - {notif['text']}")
+ 
     for idx, notif in enumerate(reversed(st.session_state.notifications)):
         st.info(f"{notif['timestamp']} - {notif['text']}")
         notif_id = len(st.session_state.notifications) - 1 - idx
