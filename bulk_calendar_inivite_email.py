@@ -10,6 +10,7 @@ from icalendar import Calendar, Event, vCalAddress, vText
 import re
 from datetime import datetime
 import pytz
+from email.utils import formataddr
 def sent():
     def parse_time_range(time_str):
         """Parse time range string into start and end times"""
@@ -55,7 +56,8 @@ def sent():
     def send_email(sender, password, receiver, subject, body, ics_data):
         """Send email with ICS attachment"""
         msg = MIMEMultipart()
-        msg['From'] = sender
+        # msg['From'] = sender
+        msg['From'] = formataddr(("IIM Indore Notification", sender))
         msg['To'] = receiver
         msg['Subject'] = subject
 

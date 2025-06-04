@@ -2,6 +2,7 @@ import smtplib
 import csv
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.utils import formataddr
 
 # Sender email credentials
 SENDER_EMAIL = 'amitpandeyblogs@gmail.com'
@@ -36,7 +37,8 @@ def send_bulk_email(recipients, attention, subject, message_template):
 
         for recipient in recipients:
             msg = MIMEMultipart()
-            msg['From'] = SENDER_EMAIL
+            # msg['From'] = SENDER_EMAIL
+            msg['From'] = formataddr(("IIM Indore Notification", SENDER_EMAIL))
             msg['To'] = recipient['email']
             msg['Subject'] = f"{attention} {subject}"
 

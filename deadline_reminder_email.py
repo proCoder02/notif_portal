@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import smtplib
 from email.mime.text import MIMEText
 import hashlib
+from email.utils import formataddr
 def deadline_reminders():
     # Email Config
     SENDER_EMAIL = 'amitpandeyblogs@gmail.com'
@@ -23,7 +24,8 @@ def deadline_reminders():
         try:
             msg = MIMEText(body)
             msg['Subject'] = subject
-            msg['From'] = SENDER_EMAIL
+            # msg['From'] = SENDER_EMAIL
+            msg['From'] = formataddr(("IIM Indore Notification", SENDER_EMAIL))
             msg['To'] = ', '.join(recipients)
 
             with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:

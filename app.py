@@ -6,10 +6,12 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from admin_insights import show_admin_insights
 from create_user import signup
-from custom_css import inject_custom_css
 from db_connections import fetch_user
 from deadline_reminder_email import deadline_reminders
 from bulk_calendar_inivite_email import sent  
+from email.utils import formataddr
+
+
 
 # --- Credentials (for demo only, use env vars or st.secrets in production)
 SENDER_EMAIL = 'amitpandeyblogs@gmail.com'
@@ -56,7 +58,8 @@ def send_bulk_email(recipients, attention, subject, message_template):
 
         for recipient in recipients:
             msg = MIMEMultipart()
-            msg['From'] = SENDER_EMAIL
+            #msg['From'] = SENDER_EMAIL
+            msg['From'] = formataddr(("IIM Indore Notification", SENDER_EMAIL))
             msg['To'] = recipient['email']
             msg['Subject'] = f"{attention} {subject}"
             personalized_message = message_template.replace('\\n', '\n').format(name=recipient['name'])
