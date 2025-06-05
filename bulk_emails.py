@@ -4,6 +4,16 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formataddr
 
+hide_menu_style = """
+        <style>
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+        </style>
+        """
+st.markdown(hide_menu_style, unsafe_allow_html=True)
+
+
 # Sender email credentials
 SENDER_EMAIL = 'amitpandeyblogs@gmail.com'
 SENDER_PASSWORD = 'qsat tohx ajcq jwaj'

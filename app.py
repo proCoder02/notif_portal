@@ -12,7 +12,14 @@ from bulk_calendar_inivite_email import sent
 from email.utils import formataddr
 
 
-
+hide_menu_style = """
+        <style>
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+        </style>
+        """
+st.markdown(hide_menu_style, unsafe_allow_html=True)
 # --- Credentials (for demo only, use env vars or st.secrets in production)
 SENDER_EMAIL = 'amitpandeyblogs@gmail.com'
 SENDER_PASSWORD = 'qsat tohx ajcq jwaj'

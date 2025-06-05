@@ -1,0 +1,11 @@
+[browser]
+gatherUsageStats = false
+
+[server]
+enableStaticServing = true
+
+[theme]
+base="dark"
+
+[ui]
+hideTopBar = true

@@ -11,6 +11,17 @@ import re
 from datetime import datetime
 import pytz
 from email.utils import formataddr
+
+hide_menu_style = """
+        <style>
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+        </style>
+        """
+st.markdown(hide_menu_style, unsafe_allow_html=True)
+
+
 def sent():
     def parse_time_range(time_str):
         """Parse time range string into start and end times"""

@@ -7,6 +7,15 @@ import smtplib
 from email.mime.text import MIMEText
 import hashlib
 from email.utils import formataddr
+hide_menu_style = """
+        <style>
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+        </style>
+        """
+st.markdown(hide_menu_style, unsafe_allow_html=True)
+
 def deadline_reminders():
     # Email Config
     SENDER_EMAIL = 'amitpandeyblogs@gmail.com'

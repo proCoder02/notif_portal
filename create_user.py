@@ -1,5 +1,13 @@
 import streamlit as st
 from db_connections import create_user
+hide_menu_style = """
+        <style>
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+        </style>
+        """
+st.markdown(hide_menu_style, unsafe_allow_html=True)
 def signup():
     st.title("Create New Account")
     new_username = st.text_input("Choose a Username")
