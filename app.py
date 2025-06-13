@@ -6,12 +6,13 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from admin_insights import show_admin_insights
 from create_user import signup
-from db_connections import fetch_user
+from db_connections import fetch_notifications, fetch_polls, fetch_user, insert_notification, insert_poll
 from deadline_reminder_email import deadline_reminders
 from deadline_reminder_scheduler import deadline_reminder_scheduler
 
 from bulk_calendar_inivite_email import sent  
 from email.utils import formataddr
+import json
 
 
 hide_menu_style = """
@@ -45,14 +46,46 @@ if "logged_in" not in st.session_state:
 
 def login():
     st.title("Classroom Portal Login")
+    role_choice = st.radio("Who are you?", ["Student", "Admin"])
+
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
+    room_code = None
+    if role_choice == "Student":
+        room_code = st.text_input("Enter Room Code")
+        st.session_state.room_code = room_code
+        st.session_state.notifications = [
+        {"text": t, "timestamp": ts.strftime("%Y-%m-%d %H:%M")}
+        for t, ts in fetch_notifications(room_code)
+    ]
+    st.session_state.polls = [
+        {"id": id_, "question": q, "options": opts, "votes": json.loads(v)}
+        for id_, q, opts, v in fetch_polls(room_code)
+    ]
+    if role_choice == "Admin":
+        room_code = st.text_input("Enter Room Code")
+        st.session_state.room_code = room_code
     if st.button("Login"):
         user = fetch_user(username)
-        if user and user[1] == password:
+        if user and user[1] == password and user[2] == role_choice.lower():
             st.session_state.logged_in = True
             st.session_state.username = user[0]
             st.session_state.role = user[2]
+
+            if role_choice == "Student":
+                st.session_state.room_code = room_code
+
+             # Load persistent data
+            st.session_state.notifications = [
+                {"text": t, "timestamp": ts.strftime("%Y-%m-%d %H:%M")}
+                for t, ts in fetch_notifications(room_code)
+            ]
+            st.session_state.polls = [
+                {"id": id_, "question": q, "options": opts, "votes": json.loads(v)}
+                for id_, q, opts, v in fetch_polls(user[0])
+            ]
+
+
             st.success(f"Welcome, {user[0]}!")
             st.rerun()
         else:
@@ -97,25 +130,16 @@ def admin_dashboard():
         "View Insights"
     ])
 
-    st.title(f"Admin Panel – {st.session_state.username}")
+    st.title(f"Admin Panel – {st.session_state.room_code}")
 
     if tab == "Post Notification":
         st.text('Post Notifications')
     elif tab == "Post Poll":
         st.text('Post Poll')
-    elif tab == "Send Bulk Email":
-        st.text('Send Emails')
-    elif tab == "Email Bulk Invites":
-        st.text('Email Bulk Invites')
-    elif tab == ("Deadline Reminders"):
-        st.text("Deadline Reminders")
-    elif tab == "View Insights":
-        show_admin_insights()
-
-
     if tab == "Post Notification":
-        notif = st.text_area("Enter Notification")
-        if st.button("Post Notification"):
+        notif = st.text_area("Enter Notification", key='enter_notification')
+        if st.button("Post Notification", key='post_notification'):
+            insert_notification(st.session_state.room_code, notif)
             st.session_state.notifications.append({
                 "text": notif,
                 "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -126,16 +150,50 @@ def admin_dashboard():
         question = st.text_input("Poll Question")
         options = st.text_area("Poll Options (comma separated)").split(",")
         if st.button("Post Poll"):
+            votes = {opt.strip(): 0 for opt in options}
+            insert_poll(st.session_state.username, question, options, votes)
             poll_id = len(st.session_state.polls)
             st.session_state.polls.append({
                 "id": poll_id,
                 "question": question,
                 "options": options,
-                "votes": {opt.strip(): 0 for opt in options}
+                "votes": votes
             })
             st.success("Poll created.")
 
     elif tab == "Send Bulk Email":
+        st.text('Send Emails')
+    elif tab == "Email Bulk Invites":
+        st.text('Email Bulk Invites')
+    elif tab == ("Deadline Reminders"):
+        st.text("Deadline Reminders")
+    elif tab == "View Insights":
+        show_admin_insights()
+
+
+    # if tab == "Post Notification":
+    #     notif = st.text_area("Enter Notification")
+    #     if st.button("Post Notification"):
+    #         st.session_state.notifications.append({
+    #             "text": notif,
+    #             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M")
+    #         })
+    #         st.success("Notification posted.")
+
+    # elif tab == "Post Poll":
+    #     question = st.text_input("Poll Question")
+    #     options = st.text_area("Poll Options (comma separated)").split(",")
+    #     if st.button("Post Poll"):
+    #         poll_id = len(st.session_state.polls)
+    #         st.session_state.polls.append({
+    #             "id": poll_id,
+    #             "question": question,
+    #             "options": options,
+    #             "votes": {opt.strip(): 0 for opt in options}
+    #         })
+    #         st.success("Poll created.")
+
+    if tab == "Send Bulk Email":
         st.subheader("Upload CSV Files")
         recipients_file = st.file_uploader("Recipients CSV", type="csv")
         message_file = st.file_uploader("Message CSV", type="csv")
