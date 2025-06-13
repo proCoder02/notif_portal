@@ -3,6 +3,7 @@ import csv
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formataddr
+import streamlit as st
 
 hide_menu_style = """
         <style>

@@ -8,6 +8,8 @@ from admin_insights import show_admin_insights
 from create_user import signup
 from db_connections import fetch_user
 from deadline_reminder_email import deadline_reminders
+from deadline_reminder_scheduler import deadline_reminder_scheduler
+
 from bulk_calendar_inivite_email import sent  
 from email.utils import formataddr
 
@@ -20,6 +22,11 @@ hide_menu_style = """
         </style>
         """
 st.markdown(hide_menu_style, unsafe_allow_html=True)
+
+
+
+
+
 # --- Credentials (for demo only, use env vars or st.secrets in production)
 SENDER_EMAIL = 'amitpandeyblogs@gmail.com'
 SENDER_PASSWORD = 'qsat tohx ajcq jwaj'
@@ -156,7 +163,8 @@ def admin_dashboard():
     elif tab=="Email Bulk Invites":
         sent()
     elif tab=="Deadline Reminders":
-        deadline_reminders()
+        #deadline_reminders()
+        deadline_reminder_scheduler()
 
 
 
